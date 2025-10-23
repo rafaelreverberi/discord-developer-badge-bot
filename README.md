@@ -1,4 +1,4 @@
-# 🛰️ Discord Dev Badge Bot
+# Discord Dev Badge Bot
 
 This simple Node.js Discord bot comes online once a week to keep the **Active Developer Badge** active — all fully automated via **GitHub Actions**.
 
