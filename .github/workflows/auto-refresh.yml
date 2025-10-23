@@ -1,0 +1,30 @@
+name: Auto Refresh Developer Badge
+
+on:
+  schedule:
+    # Jeden Montag um 9:00 Uhr (UTC)
+    - cron: "0 9 * * 1"
+  workflow_dispatch: # erlaubt manuelles Ausführen
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📦 Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: 🧰 Node installieren
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 📦 Dependencies installieren
+        run: npm install
+
+      - name: ⚙️ Developer Badge erneuern
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          GUILD_ID: ${{ secrets.GUILD_ID }}
+        run: node index.js

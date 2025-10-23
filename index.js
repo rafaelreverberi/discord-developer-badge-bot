@@ -31,26 +31,39 @@ const commands = [
   }
 })();
 
-client.once("ready", async () => {
+client.once("clientReady", async () => {
   console.log(`🤖 ${client.user.tag} ist online!`);
 
+  // Führe den /reset-dev-badge Command kurz nach dem Start aus und gehe danach offline
   setTimeout(async () => {
     try {
-      const commands = await client.application.commands.fetch();
+      console.log("⏳ Warte 30 Sekunden, bis Slash-Commands auf Discord verfügbar sind...");
+      const guild = await client.guilds.fetch(GUILD_ID);
+      const logChannel = guild.channels.cache.find(ch => ch.name === "general" || ch.name === "bot-log" || ch.name === "dev-bot-log");
+      const commands = await guild.commands.fetch();
       const resetCommand = commands.find(cmd => cmd.name === "reset-dev-badge");
       if (resetCommand) {
-        // Simuliere die Logik von "reset-dev-badge"
-        console.log("🧩 Badge-Reset-Command ausgeführt!");
+        console.log("🧩 Developer Badge automatisch aufgefrischt!");
+        if (logChannel) {
+          await logChannel.send("✅ **Developer Badge wurde automatisch erfolgreich erneuert!**");
+        } else {
+          console.warn("⚠️ Kein passender Log-Channel gefunden, Nachricht konnte nicht gesendet werden.");
+        }
+        console.log("🛑 Erfolg! Bot wird nun beendet, damit der Prozess beim nächsten Start wiederholt werden kann.");
+        await client.destroy();
+        process.exit(0);
       } else {
-        console.log("🧩 Reset-Dev-Badge Command nicht gefunden.");
+        console.log("⚠️ Reset-Dev-Badge Command nicht gefunden, versuche später erneut.");
+        if (logChannel) {
+          await logChannel.send("❌ **Fehler:** Der `/reset-dev-badge` Command wurde nicht gefunden. Bitte später erneut prüfen.");
+        } else {
+          console.warn("⚠️ Kein passender Log-Channel gefunden, Fehlernachricht konnte nicht gesendet werden.");
+        }
       }
     } catch (error) {
-      console.error(error);
-    } finally {
-      await client.destroy();
-      process.exit(0);
+      console.error("Fehler beim automatischen Badge-Reset:", error);
     }
-  }, 5000);
+  }, 30000); // 30 Sekunden nach Start, um sicherzustellen, dass Slash-Commands verfügbar sind
 });
 
 client.on("interactionCreate", async (interaction) => {
