@@ -1,0 +1,23 @@
+name: weekly-discord-bot
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # Montag 06:00 UTC = 07:00 Schweizer Zeit
+  workflow_dispatch:       # erlaubt manuelles Starten im GitHub-UI
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run bot
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          TARGET_GUILD: ${{ secrets.TARGET_GUILD }}
+        run: node index.js

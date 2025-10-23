@@ -1,9 +1,9 @@
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require("discord.js");
 
 // Trage hier deine Daten ein:
-const TOKEN = "MTQzMDIzMzkzOTM4OTE5MDM2OA.G8q5Io.f1GxzHqspQvPxAmNYgQKaD9gAHt_L3hdenFcoI";
-const CLIENT_ID = "1430233939389190368";
-const GUILD_ID = "1430234992243642509"; // dein Server, auf dem du den Bot hast
+const TOKEN = process.env.DISCORD_TOKEN;
+const CLIENT_ID = process.env.CLIENT_ID;
+const GUILD_ID = process.env.GUILD_ID;
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const rest = new REST({ version: "10" }).setToken(TOKEN);
@@ -30,8 +30,26 @@ const commands = [
   }
 })();
 
-client.once("ready", () => {
+client.once("ready", async () => {
   console.log(`🤖 ${client.user.tag} ist online!`);
+
+  setTimeout(async () => {
+    try {
+      const commands = await client.application.commands.fetch();
+      const resetCommand = commands.find(cmd => cmd.name === "reset-dev-badge");
+      if (resetCommand) {
+        // Simuliere die Logik von "reset-dev-badge"
+        console.log("🧩 Badge-Reset-Command ausgeführt!");
+      } else {
+        console.log("🧩 Reset-Dev-Badge Command nicht gefunden.");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      await client.destroy();
+      process.exit(0);
+    }
+  }, 5000);
 });
 
 client.on("interactionCreate", async (interaction) => {
