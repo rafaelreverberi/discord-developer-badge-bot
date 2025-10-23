@@ -1,0 +1,5 @@
+# Ignoriere Umgebungsvariablen
+.env
+
+# Optional: node_modules, falls noch nicht drin
+node_modules/
