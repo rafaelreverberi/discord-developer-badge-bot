@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require("discord.js");
 
 // Trage hier deine Daten ein:
